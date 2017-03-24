@@ -1,0 +1,61 @@
+clear
+clc
+
+global ks kt ms mu bs bt ZR zrdot w Amp A B C L rho1 rho2 rho3 rho4
+
+kt=(704*10^3)/4; %N/m
+ks=15*10^3; %N/m
+bs=1400;%Ns/m  Check
+bt=0; %Ns/m
+mu=181/4; %kg
+ms=1814/4;%kg
+rho1 = 400; 
+rho2 = 10;
+rho3 = 400;
+rho4 = 10;
+
+A=[0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
+B=[0;1/ms;0;-1/mu];
+L=[0;0;-1;0];
+C=[1 0 -1 0;0 1 0 0];
+
+R = 1/ms^2;
+N = [-ks/ms^2; -bs/ms^2; 0; bs/ms^2];
+Q = [];
+
+%% 
+
+%% Q3
+
+disp('Eigen Values of A');
+[EigVec,EigVal]=eig(A);
+EigVal
+eig(A)
+disp('Eigen Vectors of A');
+EigVec
+
+sigma1=real(EigVal(1,1));
+omega1=imag(EigVal(1,1));
+sigma2=real(EigVal(3,3));
+omega2=imag(EigVal(3,3));
+
+disp('Canonical Form (Two Imaginary)');
+Canon=[-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+
+%% Q4
+
+Co=ctrb(A,B);
+disp('Controllability Matrix');
+Co
+Corank=rank(Co)
+disp('Rank of Controllability Matrix');
+Corank=rank(Co)
+OB=obsv(A,C);
+disp('Obersvability Matrix');
+OB
+disp('Rank of Observability Matrix');
+Obrank=rank(OB)
+
+
+
+
