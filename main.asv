@@ -1,61 +1,139 @@
 clear
 clc
 
-global ks kt ms mu bs bt ZR zrdot w Amp A B C L rho1 rho2 rho3 rho4
+%% Parameters
 
-kt=(704*10^3)/4; %N/m
-ks=15*10^3; %N/m
-bs=1400;%Ns/m  Check
-bt=0; %Ns/m
-mu=181/4; %kg
-ms=1814/4;%kg
+global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40
+
+kt = (704*10^3)/4; % N/m
+ks = 15*10^3; % N/m
+bs = 1400; % Ns/m  Check
+bt = 0; % Ns/m
+mu = 181/4; % kg
+ms = 1814/4; % kg
 rho1 = 400; 
 rho2 = 10;
 rho3 = 400;
 rho4 = 10;
+Amp = 0.05;
+w = 5;
+t0 = 0;
+tf = 10;
 
-A=[0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
-B=[0;1/ms;0;-1/mu];
-L=[0;0;-1;0];
-C=[1 0 -1 0;0 1 0 0];
+A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
+B = [0;1/ms;0;-1/mu];
+L = [0;0;-1;0];
+C = [1 0 -1 0;0 1 0 0];
 
 R = 1/ms^2;
+Rinv = 1/R;
 N = [-ks/ms^2; -bs/ms^2; 0; bs/ms^2];
-Q = [];
+Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
+     bs*ks/ms^2          (bs^2/ms^2 + rho2)    0      -bs^2/ms^2;
+     0                   0                     rho3   0;
+     -bs*ks/ms^2         -bs^2/ms^2            0      (bs^2/ms^2 + rho2)];
 
-%% 
+%% Q2
 
-%% Q3
+% x1 = zs-zu
+% x2 = zsdot
+% x3 = zu-zr
+% x4 = zudot
 
-disp('Eigen Values of A');
-[EigVec,EigVal]=eig(A);
-EigVal
-eig(A)
-disp('Eigen Vectors of A');
-EigVec
+zs0 = 0;
+zu0 = 0;
+zsdot0 = 0;
+zudot0 = 0;
+zr0 = 0;
 
-sigma1=real(EigVal(1,1));
-omega1=imag(EigVal(1,1));
-sigma2=real(EigVal(3,3));
-omega2=imag(EigVal(3,3));
+x10 = zs0-zu0;
+x20 = zsdot0;
+x30 = zu0-zr0;
+x40 = zudot0;
 
-disp('Canonical Form (Two Imaginary)');
-Canon=[-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+x0 = [x10; x20; x30; x40];
 
-%% Q4
+tspan = [t0 tf];
+[T,Y] = rk4fixed(@car,tspan,x0,5000);
 
-Co=ctrb(A,B);
-disp('Controllability Matrix');
-Co
-Corank=rank(Co)
-disp('Rank of Controllability Matrix');
-Corank=rank(Co)
-OB=obsv(A,C);
-disp('Obersvability Matrix');
-OB
-disp('Rank of Observability Matrix');
-Obrank=rank(OB)
+u = 0;
+ZR = Amp*sin(w*T);
 
+zu = Y(:,3) + ZR;
+zs = Y(:,1) + zu;
+
+% %% Q3
+% 
+% disp('Eigen Values of A');
+% [EigVec,EigVal] = eig(A);
+% EigVal
+% eig(A)
+% disp('Eigen Vectors of A');
+% EigVec
+% 
+% sigma1 = real(EigVal(1,1));
+% omega1 = imag(EigVal(1,1));
+% sigma2 = real(EigVal(3,3));
+% omega2 = imag(EigVal(3,3));
+% 
+% disp('Canonical Form (Two Imaginary)');
+% Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+% 
+% %% Q4
+% 
+% Co=ctrb(A,B);
+% disp('Controllability Matrix');
+% Co
+% Corank = rank(Co)
+% disp('Rank of Controllability Matrix');
+% Corank = rank(Co)
+% OB = obsv(A,C);
+% disp('Obersvability Matrix');
+% OB
+% disp('Rank of Observability Matrix');
+% Obrank = rank(OB)
+
+%% Q5
+
+solinit = bvpinit(linspace(t0,tf,5000),[0 0 0 0 0 0 0 0]);
+sol = bvp4c(@OLoptimalControl,@OLcontrolBC,solinit);
+
+length = size(sol.x,2);
+xdotMat = zeros(length,8);
+Force = zeros(1,length);
+z_accl = zeros(1,length);
+
+for i = 1:length
+    [xdot, F, zsddot] = OLoptimalControl(sol.x(i),sol.y(:,i));
+    xdotMat = xdot;
+    Force(1,i) = F;
+    z_accl(1,i) = zsddot;
+end
+
+%% Plots
+
+fig = figure(1);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,zs,'Color,'red',T,ZR,'b',sol.x,(sol.y(1,:) + sol.y(3,:) + ZR'),'g');
+title('Sprung Mass Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+legend('Passive','Road Profile','Active ')
+set(legend,'Interpreter','Latex','FontSize',12)
+
+% %%
+% figure(2)
+% plot(T,zu);
+% title('Zu vs T');
+% 
+% figure(4)
+% plot(T,Y(:,1));
+% 
+% figure(5)
+% plot(sol.x,Force)
+% 
 
 
 

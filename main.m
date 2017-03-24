@@ -12,11 +12,11 @@ bt = 0; % Ns/m
 mu = 181/4; % kg
 ms = 1814/4; % kg
 rho1 = 400; 
-rho2 = 10;
-rho3 = 400;
-rho4 = 10;
-Amp = 0.1;
-w = 0.5;
+rho2 = 40;
+rho3 = 800;
+rho4 = 40;
+Amp = 0;
+w = 5;
 t0 = 0;
 tf = 10;
 
@@ -40,7 +40,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 % x3 = zu-zr
 % x4 = zudot
 
-zs0 = 0;
+zs0 = -0.05;
 zu0 = 0;
 zsdot0 = 0;
 zudot0 = 0;
@@ -56,42 +56,50 @@ x0 = [x10; x20; x30; x40];
 tspan = [t0 tf];
 [T,Y] = rk4fixed(@car,tspan,x0,5000);
 
+lengthPass = size(T,1);
+zacclPass = zeros(1,lengthPass);
+
+for i = 1:lengthPass
+    [xdot, zsddotPass] = car(T(i),Y(i,:)');
+    zacclPass(1,i) = zsddotPass;
+end
+
 u = 0;
 ZR = Amp*sin(w*T);
 
 zu = Y(:,3) + ZR;
 zs = Y(:,1) + zu;
 
-%% Q3
-
-disp('Eigen Values of A');
-[EigVec,EigVal] = eig(A);
-EigVal
-eig(A)
-disp('Eigen Vectors of A');
-EigVec
-
-sigma1 = real(EigVal(1,1));
-omega1 = imag(EigVal(1,1));
-sigma2 = real(EigVal(3,3));
-omega2 = imag(EigVal(3,3));
-
-disp('Canonical Form (Two Imaginary)');
-Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
-
-%% Q4
-
-Co=ctrb(A,B);
-disp('Controllability Matrix');
-Co
-Corank = rank(Co)
-disp('Rank of Controllability Matrix');
-Corank = rank(Co)
-OB = obsv(A,C);
-disp('Obersvability Matrix');
-OB
-disp('Rank of Observability Matrix');
-Obrank = rank(OB)
+% %% Q3
+% 
+% disp('Eigen Values of A');
+% [EigVec,EigVal] = eig(A);
+% EigVal
+% eig(A)
+% disp('Eigen Vectors of A');
+% EigVec
+% 
+% sigma1 = real(EigVal(1,1));
+% omega1 = imag(EigVal(1,1));
+% sigma2 = real(EigVal(3,3));
+% omega2 = imag(EigVal(3,3));
+% 
+% disp('Canonical Form (Two Imaginary)');
+% Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+% 
+% %% Q4
+% 
+% Co=ctrb(A,B);
+% disp('Controllability Matrix');
+% Co
+% Corank = rank(Co)
+% disp('Rank of Controllability Matrix');
+% Corank = rank(Co)
+% OB = obsv(A,C);
+% disp('Obersvability Matrix');
+% OB
+% disp('Rank of Observability Matrix');
+% Obrank = rank(OB)
 
 %% Q5
 
@@ -101,35 +109,56 @@ sol = bvp4c(@OLoptimalControl,@OLcontrolBC,solinit);
 length = size(sol.x,2);
 xdotMat = zeros(length,8);
 Force = zeros(1,length);
-z_accl = zeros(1,length);
+zaccl = zeros(1,length);
 
 for i = 1:length
     [xdot, F, zsddot] = OLoptimalControl(sol.x(i),sol.y(:,i));
     xdotMat = xdot;
     Force(1,i) = F;
-    z_accl(1,i) = zsddot;
+    zaccl(1,i) = zsddot;
 end
 
 %% Plots
 
-figure(1)
-plot(T,zs,'r',T,ZR,'b',sol.x,sol.y(1,:),'g');
-title('Zs vs T');
+fig = figure(1);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,zs,'-r','LineWidth',1.5)
+hold on
+plot(T,ZR,'-.b','LineWidth',1.5)
+plot(sol.x,(sol.y(1,:) + sol.y(3,:) + ZR'),'Color','green','LineWidth',1.5)
+title('Sprung Mass Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+legend('Passive','Road Profile','Active ')
+set(legend,'Interpreter','Latex','FontSize',12)
 
-figure(2)
-plot(T,zu);
-title('Zu vs T');
+fig = figure(2);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,zacclPass,'-r','LineWidth',1.5)
+hold on
+plot(T,zaccl,'-g','LineWidth',1.5)
+title('Sprung Mass Acceleration vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
+legend('Passive','Active ')
+set(legend,'Interpreter','Latex','FontSize',12)
 
-figure(3)
-plot(T,ZR);
-title('ZR vs T');
 
-figure(4)
-plot(T,Y(:,1));
-
-figure(5)
-plot(sol.x,Force)
-
+% %%
+% figure(2)
+% plot(T,zu);
+% title('Zu vs T');
+% 
+% figure(4)
+% plot(T,Y(:,1));
+% 
+% figure(5)
+% plot(sol.x,Force)
+% 
 
 
 

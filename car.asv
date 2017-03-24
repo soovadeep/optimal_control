@@ -1,11 +1,6 @@
 function [y,zsddot] = car(t,x)
 
-global ks bs ms w Amp A B L 
-
-x1 = x(1);
-x2 = x(2);
-x3 = x(3);
-x4 = x(4);
+global ks w Amp A B L 
 
 F = 0;
 
