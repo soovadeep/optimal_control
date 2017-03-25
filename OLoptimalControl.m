@@ -24,8 +24,8 @@ F = -Rinv*B'*lambda;
 
 % State and Co-state equations
 
-Xdot = A*X - (B*Rinv*B')*lambda + L*zrdot;
-lambdadot = -Q*X + (N*Rinv*B' - A')*lambda;
+Xdot = A*X - (B*Rinv*B')*lambda + L*zrdot -(B*Rinv)*X'*N;
+lambdadot = -Q*X + (N*Rinv*B' - A')*lambda + N*Rinv*X'*N;
 
 xdot = [Xdot;lambdadot];
 

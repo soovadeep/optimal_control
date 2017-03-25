@@ -11,14 +11,15 @@ bs = 1400; % Ns/m  Check
 bt = 0; % Ns/m
 mu = 181/4; % kg
 ms = 1814/4; % kg
-rho1 = 400; 
-rho2 = 40;
-rho3 = 800;
-rho4 = 40;
-Amp = 0;
+rho1 = 0.400; 
+rho2 = 0.040;
+rho3 = 0.400;
+rho4 = 0.040;
+Amp = 0.05;
 w = 1*2*pi;
 t0 = 0;
-tf = 10;
+tf = 20;
+steps = 20000;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
 B = [0;1/ms;0;-1/mu];
@@ -40,7 +41,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 % x3 = zu-zr
 % x4 = zudot
 
-zs0 = -0.05;
+zs0 = 0;
 zu0 = 0;
 zsdot0 = 0;
 zudot0 = 0;
@@ -54,7 +55,7 @@ x40 = zudot0;
 x0 = [x10; x20; x30; x40];
 
 tspan = [t0 tf];
-[T,Y] = rk4fixed(@car,tspan,x0,5000);
+[T,Y] = rk4fixed(@car,tspan,x0,steps);
 
 lengthPass = size(T,1);
 zacclPass = zeros(1,lengthPass);
@@ -82,7 +83,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Response','Road Profile')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Passive-SMD','-djpeg','-r300')
+print('Passive-SMD-Dynamic','-djpeg','-r300')
 
 fig = figure(2);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -92,7 +93,7 @@ plot(T,zacclPass,'-r','LineWidth',1.5)
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-print('Passive-SMA','-djpeg','-r300')
+print('Passive-SMA-Dynamic','-djpeg','-r300')
 
 fig = figure(3);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -102,7 +103,7 @@ plot(T,Y(:,1),'-r','LineWidth',1.5)
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-SD','-djpeg','-r300')
+print('Passive-SD-Dynamic','-djpeg','-r300')
 
 fig = figure(4);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -112,7 +113,7 @@ plot(T,Y(:,3),'-r','LineWidth',1.5)
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-TD','-djpeg','-r300')
+print('Passive-TD-Dynamic','-djpeg','-r300')
 
 %% Q3
 
@@ -147,7 +148,7 @@ Obrank = rank(OB)
 
 %% Q5
 
-solinit = bvpinit(linspace(t0,tf,5000),[0 0 0 0 0 0 0 0]);
+solinit = bvpinit(linspace(t0,tf,steps),[0 0 0 0 0 0 0 0]);
 sol = bvp4c(@OLoptimalControl,@OLcontrolBC,solinit);
 
 length = size(sol.x,2);
@@ -162,9 +163,7 @@ for i = 1:length
     zaccl(1,i) = zsddot;
 end
 
-%% Plots
-
-fig = figure(1);
+fig = figure(5);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
@@ -177,8 +176,9 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Road Profile','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
+print('Active-SMD-Dynamic','-djpeg','-r300')
 
-fig = figure(2);
+fig = figure(6);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
@@ -190,8 +190,9 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
+print('Active-SMA-Dynamic','-djpeg','-r300')
 
-fig = figure(3);
+fig = figure(7);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
@@ -203,8 +204,9 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
+print('Active-SD-Dynamic','-djpeg','-r300')
 
-fig = figure(4);
+fig = figure(8);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
@@ -214,5 +216,6 @@ plot(T,sol.y(3,:),'-g','LineWidth',1.5)
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-legend('Passive','Active ')
+legend('Passive','Active')
 set(legend,'Interpreter','Latex','FontSize',12)
+print('Active-TD-Dynamic','-djpeg','-r300')
