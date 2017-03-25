@@ -16,14 +16,14 @@ rho2 = 40;
 rho3 = 800;
 rho4 = 40;
 Amp = 0;
-w = 5;
+w = 1*2*pi;
 t0 = 0;
 tf = 10;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
 B = [0;1/ms;0;-1/mu];
 L = [0;0;-1;0];
-C = [1 0 -1 0;0 1 0 0];
+C = [1 0 0 0;0 1 0 0];
 
 R = 1/ms^2;
 Rinv = 1/R;
@@ -70,36 +70,80 @@ ZR = Amp*sin(w*T);
 zu = Y(:,3) + ZR;
 zs = Y(:,1) + zu;
 
-% %% Q3
-% 
-% disp('Eigen Values of A');
-% [EigVec,EigVal] = eig(A);
-% EigVal
-% eig(A)
-% disp('Eigen Vectors of A');
-% EigVec
-% 
-% sigma1 = real(EigVal(1,1));
-% omega1 = imag(EigVal(1,1));
-% sigma2 = real(EigVal(3,3));
-% omega2 = imag(EigVal(3,3));
-% 
-% disp('Canonical Form (Two Imaginary)');
-% Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
-% 
-% %% Q4
-% 
-% Co=ctrb(A,B);
-% disp('Controllability Matrix');
-% Co
-% Corank = rank(Co)
-% disp('Rank of Controllability Matrix');
-% Corank = rank(Co)
-% OB = obsv(A,C);
-% disp('Obersvability Matrix');
-% OB
-% disp('Rank of Observability Matrix');
-% Obrank = rank(OB)
+fig = figure(1);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,zs,'-r','LineWidth',1.5)
+hold on
+plot(T,ZR,'-.b','LineWidth',1.5)
+title('Sprung Mass Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+legend('Response','Road Profile')
+set(legend,'Interpreter','Latex','FontSize',12)
+print('Passive-SMD','-djpeg','-r300')
+
+fig = figure(2);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,zacclPass,'-r','LineWidth',1.5)
+title('Sprung Mass Acceleration vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
+print('Passive-SMA','-djpeg','-r300')
+
+fig = figure(3);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,Y(:,1),'-r','LineWidth',1.5)
+title('Suspension Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+print('Passive-SD','-djpeg','-r300')
+
+fig = figure(4);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,Y(:,3),'-r','LineWidth',1.5)
+title('Tire Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+print('Passive-TD','-djpeg','-r300')
+
+%% Q3
+
+disp('Eigen Values of A');
+[EigVec,EigVal] = eig(A);
+EigVal
+eig(A)
+disp('Eigen Vectors of A');
+EigVec
+
+sigma1 = real(EigVal(1,1));
+omega1 = imag(EigVal(1,1));
+sigma2 = real(EigVal(3,3));
+omega2 = imag(EigVal(3,3));
+
+disp('Canonical Form (Two Imaginary)');
+Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+
+%% Q4
+
+Co = ctrb(A,B);
+disp('Controllability Matrix');
+Co
+Corank = rank(Co)
+disp('Rank of Controllability Matrix');
+Corank = rank(Co)
+OB = obsv(A,C);
+disp('Obersvability Matrix');
+OB
+disp('Rank of Observability Matrix');
+Obrank = rank(OB)
 
 %% Q5
 
@@ -147,18 +191,28 @@ ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
 
+fig = figure(3);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,Y(:,1),'-r','LineWidth',1.5)
+hold on
+plot(T,sol.y(1,:),'-g','LineWidth',1.5)
+title('Suspension Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+legend('Passive','Active ')
+set(legend,'Interpreter','Latex','FontSize',12)
 
-% %%
-% figure(2)
-% plot(T,zu);
-% title('Zu vs T');
-% 
-% figure(4)
-% plot(T,Y(:,1));
-% 
-% figure(5)
-% plot(sol.x,Force)
-% 
-
-
-
+fig = figure(4);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,Y(:,3),'-r','LineWidth',1.5)
+hold on
+plot(T,sol.y(3,:),'-g','LineWidth',1.5)
+title('Tire Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+legend('Passive','Active ')
+set(legend,'Interpreter','Latex','FontSize',12)
