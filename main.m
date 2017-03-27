@@ -18,8 +18,8 @@ rho4 = 0.040;
 Amp = 0.05;
 w = 1*2*pi;
 t0 = 0;
-tf = 20;
-steps = 20000;
+tf = 30;
+steps = 30000;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
 B = [0;1/ms;0;-1/mu];
@@ -83,7 +83,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Response','Road Profile')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Passive-SMD-Dynamic','-djpeg','-r300')
+% print('Passive-SMD','-djpeg','-r300')
 
 fig = figure(2);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -93,7 +93,7 @@ plot(T,zacclPass,'-r','LineWidth',1.5)
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-print('Passive-SMA-Dynamic','-djpeg','-r300')
+% print('Passive-SMA','-djpeg','-r300')
 
 fig = figure(3);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -103,7 +103,7 @@ plot(T,Y(:,1),'-r','LineWidth',1.5)
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-SD-Dynamic','-djpeg','-r300')
+% print('Passive-SD','-djpeg','-r300')
 
 fig = figure(4);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -113,7 +113,7 @@ plot(T,Y(:,3),'-r','LineWidth',1.5)
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-TD-Dynamic','-djpeg','-r300')
+% print('Passive-TD','-djpeg','-r300')
 
 %% Q3
 
@@ -176,7 +176,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Road Profile','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-SMD-Dynamic','-djpeg','-r300')
+% print('Active-SMD','-djpeg','-r300')
 
 fig = figure(6);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -190,7 +190,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-SMA-Dynamic','-djpeg','-r300')
+% print('Active-SMA','-djpeg','-r300')
 
 fig = figure(7);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -204,7 +204,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-SD-Dynamic','-djpeg','-r300')
+% print('Active-SD','-djpeg','-r300')
 
 fig = figure(8);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -218,4 +218,28 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-TD-Dynamic','-djpeg','-r300')
+% print('Active-TD','-djpeg','-r300')
+
+%%
+
+fig = figure(9);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+subplot(2,2,1)
+plot(sol.x,sol.y(5,:),'-r','LineWidth',1.5)
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\lambda_1$','Interpreter','Latex','FontSize',12)
+subplot(2,2,2)
+plot(sol.x,sol.y(6,:),'-r','LineWidth',1.5)
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\lambda_2$','Interpreter','Latex','FontSize',12)
+subplot(2,2,3)
+plot(sol.x,sol.y(7,:),'-r','LineWidth',1.5)
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\lambda_3$','Interpreter','Latex','FontSize',12)
+subplot(2,2,4)
+plot(sol.x,sol.y(8,:),'-r','LineWidth',1.5)
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\lambda_4$','Interpreter','Latex','FontSize',12)
+print('Active-TD-Dynamic-Costates','-djpeg','-r300')
