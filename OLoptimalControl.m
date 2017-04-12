@@ -1,6 +1,6 @@
 function [xdot, F, zsddot]=OLoptimalControl(t,x) 
 
-global ks ms bs w Amp A B L N Q Rinv
+global ks ms bs w Amp A B L N Q Rinv tf
 
 x1 = x(1);
 x2 = x(2);

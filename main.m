@@ -3,7 +3,7 @@ clc
 
 %% Parameters
 
-global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40
+global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf
 
 kt = (704*10^3)/4; % N/m
 ks = 15*10^3; % N/m
@@ -16,7 +16,7 @@ rho2 = 0.040;
 rho3 = 0.400;
 rho4 = 0.040;
 Amp = 0.05;
-w = 1*2*pi;
+w = 0.5*2*pi;
 t0 = 0;
 tf = 30;
 steps = 30000;
@@ -163,6 +163,7 @@ for i = 1:length
     zaccl(1,i) = zsddot;
 end
 
+%%
 fig = figure(5);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
