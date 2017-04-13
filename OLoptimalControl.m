@@ -20,7 +20,7 @@ lambda = [lambda1; lambda2; lambda3; lambda4];
 
 % Stationarity equation
 
-F = -Rinv*B'*lambda;
+F = - Rinv*B'*lambda - Rinv*N'*X;
 
 % State and Co-state equations
 

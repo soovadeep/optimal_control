@@ -5,7 +5,7 @@ global x10 tf Amp w A L Q
 zr = Amp*sin(w*tf); 
 zrdot = Amp*w*cos(w*tf); 
 
-X = [-zr;0;0;zrdot];
-Lambda = -1/2*((A*X + L*zrdot)^-1)'*(X'*Q*X);
+% X = [-zr;0;0;zrdot];
+% Lambda = -1/2*((A*X + L*zrdot)^-1)'*(X'*Q*X);
 
-residual = [(ya(1) - x10); ya(2); ya(3); ya(4); (yb(5) - Lambda(1)); (yb(6) - Lambda(2)); (yb(7) - Lambda(3)); (yb(8) - Lambda(4))];
+residual = [(ya(1) - x10); ya(2); ya(3); ya(4); (yb(5)); (yb(6)); (yb(7)); (yb(8))];

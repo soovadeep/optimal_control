@@ -1,3 +1,4 @@
+close all
 clear
 clc
 
@@ -11,12 +12,12 @@ bs = 1400; % Ns/m  Check
 bt = 0; % Ns/m
 mu = 181/4; % kg
 ms = 1814/4; % kg
-rho1 = 0.400; 
-rho2 = 0.040;
-rho3 = 0.400;
-rho4 = 0.040;
+rho1 = 0.4; 
+rho2 = 0.04;
+rho3 = 0.4;
+rho4 = 0.04;
 Amp = 0.05;
-w = 0.5*2*pi;
+w = 1*2*pi;
 t0 = 0;
 tf = 30;
 steps = 30000;
@@ -191,7 +192,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-% print('Active-SMA','-djpeg','-r300')
+print('Active-SMA-Dynamic','-djpeg','-r300')
 
 fig = figure(7);
 set(fig,'Position',[1800 -320 1200 1000])
