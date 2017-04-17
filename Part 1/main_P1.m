@@ -17,7 +17,7 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 1*2*pi;
+w = 0*2*pi;
 t0 = 0;
 tf = 30;
 steps = 30000;
@@ -42,7 +42,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 % x3 = zu-zr
 % x4 = zudot
 
-zs0 = 0;
+zs0 = -0.05;
 zu0 = 0;
 zsdot0 = 0;
 zudot0 = 0;
@@ -192,7 +192,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-SMA-Dynamic','-djpeg','-r300')
+% print('Active-SMA-Dynamic','-djpeg','-r300')
 
 fig = figure(7);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -244,4 +244,4 @@ subplot(2,2,4)
 plot(sol.x,sol.y(8,:),'-r','LineWidth',1.5)
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\lambda_4$','Interpreter','Latex','FontSize',12)
-print('Active-TD-Dynamic-Costates','-djpeg','-r300')
+% print('Active-TD-Dynamic-Costates','-djpeg','-r300')
