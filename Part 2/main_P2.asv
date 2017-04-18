@@ -147,7 +147,6 @@ S0 = zeros(16,1);
 
 S = flipud(S);
 
-%%
 zs0FT = -0.05;
 zu0FT = 0;
 zsdot0FT = 0;
@@ -162,35 +161,29 @@ x40FT = zudot0FT;
 x0FT = [x10FT; x20FT; x30FT; x40FT];
 YFT = zeros(steps,4);
 TFT = zeros(steps,1);
-YFT(1,:) = x0FT';
+YFT(1,:) = x0
 
 t0iter = t0;
 
 % tspan = [t0 tf];
 % [TFT,YFT] = rk4fixed(@car_lqr_finite,tspan,x0FT,steps);
 
-for i = 1:steps-1
-    i
+for i = 1:steps
     SVec = S(i,:);
     SMat = (reshape(SVec,[4,4]))';
     tfiter = t0iter + stepsize;
     tspan = [t0iter tfiter];
-    x0FTiter = YFT(i,:)';
-    [TFTiter,YFTiter] = rk4fixed(@car_lqr_finite,tspan,x0FTiter,5);
-    t0iter = tfiter;
-    [xdotFT, zsddotFT] = car_lqr_finite(TFT(end),YFT(end,:)');
-    zacclFT(1,i) = zsddotFT;
-    TFT(i+1) = tfiter;
-    YFT(i+1,:) = YFTiter(end,:);
+    [TFTiter,YFTiter] = rk4fixed(@car_lqr_finite,tspan,x0FT,steps);
+    
 end
 
 lengthPassFT = size(TFT,1);
 zacclFT = zeros(1,lengthPassFT);
 
-% for i = 1:lengthPassFT
-%     [xdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
-%     zacclFT(1,i) = zsddotFT;
-% end
+for i = 1:lengthPassFT
+    [xdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
+    zacclFT(1,i) = zsddotFT;
+end
 
 zuFT = YFT(:,3) + ZR;
 zsFT = YFT(:,1) + zuFT;
@@ -211,18 +204,18 @@ legend('Active','Passive','Road Profile')
 set(legend,'Interpreter','Latex','FontSize',12)
 % print('Passive-SMD','-djpeg','-r300')
 
-% fig = figure(2);
-% set(fig,'Position',[1800 -320 1200 1000])
-% clear title
-% clear legend
-% plot(TFT,zacclFT,'-g','LineWidth',1.5)
-% hold on
-% plot(TPass,zacclPass,'-r','LineWidth',1.5)
-% legend('Active','Passive')
-% title('Sprung Mass Acceleration vs. Time')
-% xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
-% ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-% % print('Passive-SMA','-djpeg','-r300')
+fig = figure(2);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(TFT,zacclFT,'-g','LineWidth',1.5)
+hold on
+plot(TPass,zacclPass,'-r','LineWidth',1.5)
+legend('Active','Passive')
+title('Sprung Mass Acceleration vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
+% print('Passive-SMA','-djpeg','-r300')
 
 fig = figure(3);
 set(fig,'Position',[1800 -320 1200 1000])
