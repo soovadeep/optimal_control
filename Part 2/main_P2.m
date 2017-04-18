@@ -4,7 +4,7 @@ clc
 
 %% Parameters and Passive Data
 
-global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf K SMat
+global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf K SMat t0
 
 load('Y_passive_static.mat')
 TPass = T;
@@ -25,7 +25,7 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 0*2*pi;
+w = 1*2*pi;
 t0 = 0;
 tf = 15;
 steps = 15000;
@@ -179,7 +179,7 @@ for i = 1:steps-1
     [TFTiter,YFTiter] = rk4fixed(@car_lqr_finite,tspan,x0FTiter,5);
     t0iter = tfiter;
     [xdotFT, zsddotFT] = car_lqr_finite(TFT(end),YFT(end,:)');
-    zacclFT(1,i) = zsddotFT;
+%     zacclFT(1,i) = zsddotFT;
     TFT(i+1) = tfiter;
     YFT(i+1,:) = YFTiter(end,:);
 end
