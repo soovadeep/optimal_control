@@ -25,7 +25,7 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 1*2*pi;
+w = 0*2*pi;
 t0 = 0;
 tf = 15;
 steps = 15000;
@@ -162,12 +162,10 @@ x40FT = zudot0FT;
 x0FT = [x10FT; x20FT; x30FT; x40FT];
 YFT = zeros(steps,4);
 TFT = zeros(steps,1);
+zacclFT = zeros(steps,1);
 YFT(1,:) = x0FT';
 
 t0iter = t0;
-
-% tspan = [t0 tf];
-% [TFT,YFT] = rk4fixed(@car_lqr_finite,tspan,x0FT,steps);
 
 for i = 1:steps-1
     i
@@ -178,19 +176,11 @@ for i = 1:steps-1
     x0FTiter = YFT(i,:)';
     [TFTiter,YFTiter] = rk4fixed(@car_lqr_finite,tspan,x0FTiter,5);
     t0iter = tfiter;
-    [xdotFT, zsddotFT] = car_lqr_finite(TFT(end),YFT(end,:)');
-%     zacclFT(1,i) = zsddotFT;
+    [xdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
+    zacclFT(i) = zsddotFT;
     TFT(i+1) = tfiter;
     YFT(i+1,:) = YFTiter(end,:);
 end
-
-lengthPassFT = size(TFT,1);
-zacclFT = zeros(1,lengthPassFT);
-
-% for i = 1:lengthPassFT
-%     [xdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
-%     zacclFT(1,i) = zsddotFT;
-% end
 
 zuFT = YFT(:,3) + ZR;
 zsFT = YFT(:,1) + zuFT;
@@ -202,27 +192,29 @@ clear title
 clear legend
 plot(TFT,zsFT,'-g','LineWidth',1.5)
 hold on
+plot(T,zs,'-k','LineWidth',1.5)
 plot(TPass,zsPass,'-r','LineWidth',1.5)
 plot(T,ZR,'-.b','LineWidth',1.5)
 title('Sprung Mass Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-legend('Active','Passive','Road Profile')
+legend('Active (FT)','Active (IT)','Passive','Road Profile')
 set(legend,'Interpreter','Latex','FontSize',12)
 % print('Passive-SMD','-djpeg','-r300')
 
-% fig = figure(2);
-% set(fig,'Position',[1800 -320 1200 1000])
-% clear title
-% clear legend
-% plot(TFT,zacclFT,'-g','LineWidth',1.5)
-% hold on
-% plot(TPass,zacclPass,'-r','LineWidth',1.5)
-% legend('Active','Passive')
-% title('Sprung Mass Acceleration vs. Time')
-% xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
-% ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-% % print('Passive-SMA','-djpeg','-r300')
+fig = figure(2);
+set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(TFT,zacclFT,'-g','LineWidth',1.5)
+hold on
+plot(T,zaccl,'-k','LineWidth',1.5)
+plot(TPass,zacclPass,'-r','LineWidth',1.5)
+legend('Active (FT)','Active (IT)','Passive')
+title('Sprung Mass Acceleration vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
+% print('Passive-SMA','-djpeg','-r300')
 
 fig = figure(3);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -230,8 +222,9 @@ clear title
 clear legend
 plot(TFT,YFT(:,1),'-g','LineWidth',1.5)
 hold on
+plot(T,Y(:,1),'-k','LineWidth',1.5)
 plot(TPass,YPass(:,1),'-r','LineWidth',1.5)
-legend('Active','Passive')
+legend('Active (FT)','Active (IT)','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
@@ -243,9 +236,12 @@ clear title
 clear legend
 plot(TFT,YFT(:,3),'-g','LineWidth',1.5)
 hold on 
+plot(T,Y(:,3),'-k','LineWidth',1.5)
 plot(TPass,YPass(:,3),'-r','LineWidth',1.5)
-legend('Active','Passive')
+legend('Active (FT)','Active (IT)','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % print('Passive-TD','-djpeg','-r300')
+
+%% 
