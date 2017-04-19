@@ -8,7 +8,7 @@ x3 = x(3);
 x4 = x(4);
 
 K2 = Rinv*(B'*SMat + N');
-F = -K2*x;
+F = -K2*[x(1);x(2);x(3);x(4)];
 
 zrdot = Amp*w*cos(w*t);
 
