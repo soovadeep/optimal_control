@@ -16,32 +16,28 @@ sT = zeros(4,4);
 S(:,:,tf/dt) = sT ;
 
 T = t0:dt:tf;
-x10 = [-0.05; 0; 0; 0];
 
 zr_dot = Amp*w*cos(w*T);
-X = zeros(4,tf/dt);
-X(:,1) = x10;
-ref = ones(4,1);
 
-for t=tf-1:-1:1
+for t=tf-1:-1:dt
     % Backward Pass
-    S(:,:,t)= (-S(:,:,t+1)*(A + A' - 2*B*inv(R)*N' - B*inv(R)*B'*S(:,:,t+1) - 2*N*inv(R)*B') + 4*N*inv(R)*N'- C'*Q*C)*(-dt) + S(:,:,t+1) ;
+    S(:,:,t)= (-S(:,:,t+1)*(A + A' + 2*B*inv(R)*N' + B*inv(R)*B'*S(:,:,t+1) - 2*N*inv(R)*B') + 4*N*N'- C'*Q*C)*(-dt) + S(:,:,t+1) ;
 end
 
 %% V
 V = zeros(4,1,tf/dt);
 vT = zeros(4,1);
 V(:,:,tf/dt) = vT;
-
 % zr_dot = 0;
 
-for t=tf-1:-1:1
-   V(:,:,t) = ((S(:,:,t+1)*B*inv(R)*B' + 2*N*inv(R)*B' - A')*V(:,:,t+1) - S(:,:,t+1)*L*zr_dot(t) - C'*Q*ref)*(-dt) + V(:,:,t+1);
+for t=tf-1:-1:dt
+   V(:,:,t) = ((-S(:,:,t+1)*B*inv(R)*B' + 2*N*inv(R)*B' + A')*V(:,:,t+1) - S(:,:,t+1)*L*zr_dot(t) + C'*Q*ref)*(-dt) + V(:,:,t+1);
 end
 
 %% X
+X = zeros(4,tf/dt);
 for t=1:tf/dt-1
-    X(:,t+1) = ((A - 2*B*inv(R)*N' - B*inv(R)*B'*S(:,:,t))*X(:,t) + B*inv(R)*B'*V(:,:,t) + L*zr_dot(t))*dt + X(:,t);
+    X(:,t+1) = ((A + 2*B*inv(R)*N' + B*inv(R)*B'*S(:,:,t))*X(:,t) - B*inv(R)*B'*V(:,:,t) + L*zr_dot(t))*dt + X(:,t);
 end
 
 %% Ladba

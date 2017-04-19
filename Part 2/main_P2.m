@@ -27,8 +27,8 @@ rho4 = 0.04;
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 15;
-steps = 15000;
+tf = 5;
+steps = 5000;
 stepsize = (tf-t0)/steps;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
@@ -164,6 +164,7 @@ YFT = zeros(steps,4);
 TFT = zeros(steps,1);
 zacclFT = zeros(steps,1);
 YFT(1,:) = x0FT';
+K2 = zeros(steps,4);
 
 t0iter = t0;
 
@@ -176,6 +177,7 @@ for i = 1:steps-1
     x0FTiter = YFT(i,:)';
     [TFTiter,YFTiter] = rk4fixed(@car_lqr_finite,tspan,x0FTiter,5);
     t0iter = tfiter;
+    K2(i,:) = Rinv*(B'*SMat + N');
     [xdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
     zacclFT(i) = zsddotFT;
     TFT(i+1) = tfiter;
@@ -193,7 +195,7 @@ clear legend
 plot(TFT,zsFT,'-g','LineWidth',1.5)
 hold on
 plot(T,zs,'-k','LineWidth',1.5)
-plot(TPass,zsPass,'-r','LineWidth',1.5)
+plot(TPass(1:steps),zsPass(1:steps),'-r','LineWidth',1.5)
 plot(T,ZR,'-.b','LineWidth',1.5)
 title('Sprung Mass Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
@@ -209,7 +211,7 @@ clear legend
 plot(TFT,zacclFT,'-g','LineWidth',1.5)
 hold on
 plot(T,zaccl,'-k','LineWidth',1.5)
-plot(TPass,zacclPass,'-r','LineWidth',1.5)
+plot(TPass(1:steps),zacclPass(1:steps),'-r','LineWidth',1.5)
 legend('Active (FT)','Active (IT)','Passive')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
@@ -223,7 +225,7 @@ clear legend
 plot(TFT,YFT(:,1),'-g','LineWidth',1.5)
 hold on
 plot(T,Y(:,1),'-k','LineWidth',1.5)
-plot(TPass,YPass(:,1),'-r','LineWidth',1.5)
+plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
 legend('Active (FT)','Active (IT)','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
@@ -237,7 +239,7 @@ clear legend
 plot(TFT,YFT(:,3),'-g','LineWidth',1.5)
 hold on 
 plot(T,Y(:,3),'-k','LineWidth',1.5)
-plot(TPass,YPass(:,3),'-r','LineWidth',1.5)
+plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
 legend('Active (FT)','Active (IT)','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)

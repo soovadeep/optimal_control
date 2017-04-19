@@ -17,10 +17,10 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 1*2*pi;
+w = 2*pi;
 t0 = 0;
-tf = 30;
-steps = 30000;
+tf = 10;
+steps = 10000;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
 B = [0;1/ms;0;-1/mu];
@@ -116,41 +116,41 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % print('Passive-TD','-djpeg','-r300')
 
-%% Q3
-
-disp('Eigen Values of A');
-[EigVec,EigVal] = eig(A);
-EigVal
-eig(A)
-disp('Eigen Vectors of A');
-EigVec
-
-sigma1 = real(EigVal(1,1));
-omega1 = imag(EigVal(1,1));
-sigma2 = real(EigVal(3,3));
-omega2 = imag(EigVal(3,3));
-
-disp('Canonical Form (Two Imaginary)');
-Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
-
-%% Q4
-
-Co = ctrb(A,B);
-disp('Controllability Matrix');
-Co
-Corank = rank(Co)
-disp('Rank of Controllability Matrix');
-Corank = rank(Co)
-OB = obsv(A,C);
-disp('Obersvability Matrix');
-OB
-disp('Rank of Observability Matrix');
-Obrank = rank(OB)
+% %% Q3
+% 
+% disp('Eigen Values of A');
+% [EigVec,EigVal] = eig(A);
+% EigVal
+% eig(A)
+% disp('Eigen Vectors of A');
+% EigVec
+% 
+% sigma1 = real(EigVal(1,1));
+% omega1 = imag(EigVal(1,1));
+% sigma2 = real(EigVal(3,3));
+% omega2 = imag(EigVal(3,3));
+% 
+% disp('Canonical Form (Two Imaginary)');
+% Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+% 
+% %% Q4
+% 
+% Co = ctrb(A,B);
+% disp('Controllability Matrix');
+% Co
+% Corank = rank(Co)
+% disp('Rank of Controllability Matrix');
+% Corank = rank(Co)
+% OB = obsv(A,C);
+% disp('Obersvability Matrix');
+% OB
+% disp('Rank of Observability Matrix');
+% Obrank = rank(OB)
 
 %% Q5
 
 solinit = bvpinit(linspace(t0,tf,steps),[0 0 0 0 0 0 0 0]);
-sol = bvp4c(@OLoptimalControl,@OLcontrolBC,solinit);
+sol = bvp4c(@OLoptimalControl,@OLcontrolBC2,solinit);
 
 length = size(sol.x,2);
 xdotMat = zeros(length,8);
