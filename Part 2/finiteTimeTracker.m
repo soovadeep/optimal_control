@@ -21,7 +21,7 @@ zr_dot = Amp*w*cos(w*T);
 
 for t=tf-1:-1:dt
     % Backward Pass
-    S(:,:,t)= (-S(:,:,t+1)*(A + 2*B*inv(R)*N' + B*inv(R)*B'*S(:,:,t+1) + 2*N*inv(R)*B' + A') + 4*N*N')*(-dt) + S(:,:,t+1) ;
+    S(:,:,t)= (-S(:,:,t+1)*(A + A' + 2*B*inv(R)*N' + B*inv(R)*B'*S(:,:,t+1) - 2*N*inv(R)*B') + 4*N*N'- C'*Q*C)*(-dt) + S(:,:,t+1) ;
 end
 
 %% V
@@ -29,11 +29,11 @@ V = zeros(4,1,tf/dt);
 vT = zeros(4,1);
 V(:,:,tf/dt) = vT;
 
-ref = zeros(4,1);
+ref = ones(4,1);
 % zr_dot = 0;
 
 for t=tf-1:-1:dt
-   V(:,:,t) = ((-S(:,:,t+1)*B*inv(R)*B' + 2*N*inv(R)*B' + A')*V(:,:,t+1) - S(:,:,t+1)*L*zr_dot(t))*(-dt) + V(:,:,t+1) + C'*Q*ref;
+   V(:,:,t) = ((-S(:,:,t+1)*B*inv(R)*B' + 2*N*inv(R)*B' + A')*V(:,:,t+1) - S(:,:,t+1)*L*zr_dot(t) + C'*Q*ref)*(-dt) + V(:,:,t+1);
 end
 
 %% X
@@ -45,12 +45,12 @@ end
 %% Ladba
 labda = zeros(4,tf/dt);
 for t=1:tf/dt-1
-    labda(:,t+1) = labda(:,t) + dt*(S(:,:,t)*X(:,t) - V(:,:,t) + C'*Q*ref);
+    labda(:,t+1) = S(:,:,t)*X(:,t) - V(:,:,t);
 end
 
 
 %% U
 u = zeros(4,tf/dt);
 for t=1:tf/dt-1
-    u(:,t+1) = (-inv(R)*(B'*labda(:,t) + 2*N'*X(:,t)))*dt + u(:,t);
+    u(:,t+1) = -inv(R)*(B'*labda(:,t) + 2*N'*X(:,t));
 end
