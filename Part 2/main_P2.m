@@ -27,8 +27,8 @@ rho4 = 0.04;
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 20;
-steps = 20000;
+tf = 5;
+steps = 5000;
 stepsize = (tf-t0)/steps;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
@@ -141,7 +141,7 @@ ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 
 %% Finite time LQR
 
-
+%{
 clear S;
 
 tspan = [tf t0-stepsize];
@@ -177,10 +177,11 @@ for i = 1:steps-1
     tfiter = t0iter + stepsize;
     tspan = [t0iter tfiter];
     x0FTiter = YFT(i,:)';
-    [TFTiter,YFTiter] = rk4fixed(@car_lqr_finite,tspan,x0FTiter,5);
+    [TFTiter,YFTiter] = ode15s(@car_lqr_finite,tspan,x0FTiter); %400
     t0iter = tfiter;
     K2(i,:) = Rinv*(B'*SMat + N');
-    [xdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
+    [YdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
+%     YFT(i+1,:) = YFT(i,:) + YdotFT'*stepsize;
     zacclFT(i) = zsddotFT;
     TFT(i+1) = tfiter;
     YFT(i+1,:) = YFTiter(end,:);
@@ -281,7 +282,10 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$K_4$','Interpreter','Latex','FontSize',12)
 % print('Active-TD-Dynamic-Costates','-djpeg','-r300')
 
+%}
+
 %% LQT
+
 
 clear S;
 
@@ -306,7 +310,7 @@ for i = steps + 1:-1:2
     t0iter = tfiter - stepsize;
     tspan = [tfiter t0iter];
     nu0Titer = nuT(i,:)';
-    [~,nuTiter] = rk4fixed(@finiteLQTNu,tspan,nu0Titer,5);
+    [~,nuTiter] = ode15s(@finiteLQTNu,tspan,nu0Titer);
     tfiter = t0iter;
 %     TT(i-1) = t0iter;
     nuT(i-1,:) = nuTiter(end,:);
@@ -340,7 +344,7 @@ for i = 1:steps-1
     tfiter = t0iter + stepsize;
     tspan = [t0iter tfiter];
     x0Titer = YT(i,:)';
-    [TTiter,YTiter] = rk4fixed(@car_lqt_finite,tspan,x0Titer,5);
+    [TTiter,YTiter] = ode15s(@car_lqt_finite,tspan,x0Titer);
     t0iter = tfiter;
     K3(i,:) = Rinv*(B'*SMat + N');
     [xdotT, zsddotT] = car_lqt_finite(TT(i),YT(i,:)');
@@ -407,3 +411,5 @@ legend('Active (Tracker)','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+
+%}
