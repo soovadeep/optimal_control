@@ -7,7 +7,7 @@ x2 = x(2);
 x3 = x(3);
 x4 = x(4);
 
-ref = [0.05; 0; -0.05; 0];
+ref = [0.05; 0; 0; 0];
 
 K3 = Rinv*(B'*SMat + N');
 F = -K3*[x(1);x(2);x(3);x(4)] + Rinv*N'*ref + Rinv*B'*nuiter;
