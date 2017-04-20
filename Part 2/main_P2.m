@@ -6,7 +6,7 @@ clc
 
 global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf K SMat t0 nuiter Qbar Abar
 
-load('Y_passive_dynamic.mat')
+load('Y_passive_static.mat')
 TPass = T;
 YPass = Y;
 zuPass = zu;
@@ -20,14 +20,14 @@ bs = 1400; % Ns/m  Check
 bt = 0; % Ns/m
 mu = 181/4; % kg
 ms = 1814/4; % kg
-rho1 = 500000; % 0.4 
+rho1 = 0.4; % 0.4 
 rho2 = 0.04; % 0.04
 rho3 = 0.4; % 0.4
 rho4 = 0.04; % 0.04
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 1;
+tf = 30;
 steps = tf*1000;
 stepsize = (tf-t0)/steps;
 
@@ -46,7 +46,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 
 %% Infinite time LQR
 
-%{
+
 
 % x1 = zs-zu
 % x2 = zsdot
@@ -290,6 +290,7 @@ ylabel('$K_4$','Interpreter','Latex','FontSize',12)
 
 %% LQT
 
+%{
 rho1 = 500000; % 0.4 
 
 clear S;
