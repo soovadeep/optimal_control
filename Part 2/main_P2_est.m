@@ -1,6 +1,6 @@
-close all
+% close all
 clear
-clc
+% clc
 
 %% Parameters and Passive Data
 
@@ -57,7 +57,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 
 [K,~,e] = lqr(A,B,Q,R,N);
 
-p = [real(30*e(1));real(35*e(1))];
+p = [real(25*e(1));real(20*e(1))];
 M = place(A22',(C1*A12)',p);
 
 FW = A22 - M*C1*A12;
@@ -98,14 +98,14 @@ ZR = Amp*sin(w*Tobsv);
 zuObsv = Yobsv(:,3) + ZR;
 zsObsv = Yobsv(:,1) + zuObsv;
 
-fig = figure(1);
-set(fig,'Position',[1800 -320 1200 1000])
+fig = figure(10);
+% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(Tobsv,zsObsv,'-g','LineWidth',1.5)
 hold on
-plot(T,zs,'-k','LineWidth',1.5)
-plot(TPass,zsPass,'-r','LineWidth',1.5)
+plot(T(1:steps),zs(1:steps),'-k','LineWidth',1.5)
+plot(TPass(1:steps),zsPass(1:steps),'-r','LineWidth',1.5)
 plot(Tobsv,ZR,'-.b','LineWidth',1.5)
 title('Sprung Mass Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
@@ -114,42 +114,42 @@ legend('Active (Observer)','Active','Passive','Road Profile')
 set(legend,'Interpreter','Latex','FontSize',12)
 % print('Passive-SMD','-djpeg','-r300')
 
-fig = figure(2);
-set(fig,'Position',[1800 -320 1200 1000])
+fig = figure(11);
+% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(Tobsv,zacclObsv,'-g','LineWidth',1.5)
 hold on
-plot(T,zaccl,'-k','LineWidth',1.5)
-plot(TPass,zacclPass,'-r','LineWidth',1.5)
+plot(T(1:steps),zaccl(1:steps),'-k','LineWidth',1.5)
+plot(TPass(1:steps),zacclPass(1:steps),'-r','LineWidth',1.5)
 legend('Active (Observer)','Active','Passive')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 % print('Passive-SMA','-djpeg','-r300')
 
-fig = figure(3);
-set(fig,'Position',[1800 -320 1200 1000])
+fig = figure(12);
+% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(Tobsv,Yobsv(:,1),'-g','LineWidth',1.5)
 hold on
-plot(T,Y(:,1),'-k','LineWidth',1.5)
-plot(TPass,YPass(:,1),'-r','LineWidth',1.5)
+plot(T(1:steps),Y(1:steps,1),'-k','LineWidth',1.5)
+plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
 legend('Active (Observer)','Active','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % print('Passive-SD','-djpeg','-r300')
 
-fig = figure(4);
-set(fig,'Position',[1800 -320 1200 1000])
+fig = figure(13);
+% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(Tobsv,Yobsv(:,3),'-g','LineWidth',1.5)
 hold on
-plot(T,Y(:,3),'-k','LineWidth',1.5)
-plot(TPass,YPass(:,3),'-r','LineWidth',1.5)
+plot(T(1:steps),Y(1:steps,3),'-k','LineWidth',1.5)
+plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
 legend('Active (Observer)','Active','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
