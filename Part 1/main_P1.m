@@ -17,9 +17,9 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 2*pi;
+w = 0*2*pi;
 t0 = 0;
-tf = 10;
+tf = 15;
 steps = 10000;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
@@ -72,6 +72,7 @@ ZR = Amp*sin(w*T);
 zu = Y(:,3) + ZR;
 zs = Y(:,1) + zu;
 
+%{
 fig = figure(1);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -115,37 +116,40 @@ title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % print('Passive-TD','-djpeg','-r300')
+%}
 
-% %% Q3
-% 
-% disp('Eigen Values of A');
-% [EigVec,EigVal] = eig(A);
-% EigVal
-% eig(A)
-% disp('Eigen Vectors of A');
-% EigVec
-% 
-% sigma1 = real(EigVal(1,1));
-% omega1 = imag(EigVal(1,1));
-% sigma2 = real(EigVal(3,3));
-% omega2 = imag(EigVal(3,3));
-% 
-% disp('Canonical Form (Two Imaginary)');
-% Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
-% 
-% %% Q4
-% 
-% Co = ctrb(A,B);
-% disp('Controllability Matrix');
-% Co
-% Corank = rank(Co)
-% disp('Rank of Controllability Matrix');
-% Corank = rank(Co)
-% OB = obsv(A,C);
-% disp('Obersvability Matrix');
-% OB
-% disp('Rank of Observability Matrix');
-% Obrank = rank(OB)
+%% Q3
+
+%{
+disp('Eigen Values of A');
+[EigVec,EigVal] = eig(A);
+EigVal
+eig(A)
+disp('Eigen Vectors of A');
+EigVec
+
+sigma1 = real(EigVal(1,1));
+omega1 = imag(EigVal(1,1));
+sigma2 = real(EigVal(3,3));
+omega2 = imag(EigVal(3,3));
+
+disp('Canonical Form (Two Imaginary)');
+Canon = [-sigma1 omega1 0 0;-omega1 -sigma1 0 0;0 0 -sigma2 omega2;0 0 -omega2 -sigma2]
+
+%% Q4
+
+Co = ctrb(A,B);
+disp('Controllability Matrix');
+Co
+Corank = rank(Co)
+disp('Rank of Controllability Matrix');
+Corank = rank(Co)
+OB = obsv(A,C);
+disp('Obersvability Matrix');
+OB
+disp('Rank of Observability Matrix');
+Obrank = rank(OB)
+%}
 
 %% Q5
 
@@ -178,7 +182,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Road Profile','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-% print('Active-SMD','-djpeg','-r300')
+print('Active-SMD-FSF','-djpeg','-r300')
 
 fig = figure(6);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -192,7 +196,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-% print('Active-SMA-Dynamic','-djpeg','-r300')
+print('Active-SMA-FSF','-djpeg','-r300')
 
 fig = figure(7);
 set(fig,'Position',[1800 -320 1200 1000])
