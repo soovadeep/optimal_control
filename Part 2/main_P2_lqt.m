@@ -54,7 +54,6 @@ Abar = A - B*R*N';
 % SVec = S(1,:);
 % SMat = (reshape(SVec,[4,4]))';
 
-%%
 for i = steps + 1:-1:2
     i
     SVec = S(i,:);
@@ -67,6 +66,7 @@ for i = steps + 1:-1:2
     nuT(i-1,:) = nuTiter(end,:);
 end
 
+%%
 zs0T = 0;
 zu0T = 0;
 zsdot0T = 0;

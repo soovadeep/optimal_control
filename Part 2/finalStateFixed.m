@@ -1,16 +1,22 @@
-function [xdot] = finalStateFixed(x, S, V, P)
+function [xdot,zsddot, u] = finalStateFixed(t,x)
 
-global A B Rinv
+global A B Rinv SMat VVec PVec ks bs ms w Amp N
 
-SMat = reshape(S, [4,4]);
-VMat = reshape(V, [4,4]);
-PMat = reshape(P, [4,4]);
+% SMat = reshape(S, [4,4]);
+% VVec = reshape(V, [4,4]);
+% PVec = reshape(P, [4,4]);
 
-rFinal = zeros(4,1);
-K = Rinv*B*SMat;
+x1 = x(1);
+x2 = x(2);
+x3 = x(3);
+x4 = x(4);
 
-u = -(K - Rinv*B'*VMat*inv(PMat)*VMat')*x - Rinv*B'*VMat*inv(PMat)*rFinal;
+rFinal = zeros(1,1);
+K = Rinv*(B'*SMat + N');
+
+u = -(K - Rinv*B'*VVec*inv(PVec)*VVec')*x - Rinv*B'*VVec*inv(PVec)*rFinal;
 
 xdot = A*x + B*u;
+zsddot = (u - ks*x1 - bs*(x2 - x4))/ms;
 
 end
