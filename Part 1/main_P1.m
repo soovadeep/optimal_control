@@ -17,10 +17,10 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 0*2*pi;
+w = 1*2*pi;
 t0 = 0;
-tf = 15;
-steps = 10000;
+tf = 30;
+steps = tf*1000;
 
 A = [0 1 0 -1; -ks/ms -bs/ms 0 bs/ms; 0 0 0 1; ks/mu bs/mu -kt/mu -(bs+bt)/mu ];
 B = [0;1/ms;0;-1/mu];
@@ -42,7 +42,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 % x3 = zu-zr
 % x4 = zudot
 
-zs0 = -0.05;
+zs0 = 0;
 zu0 = 0;
 zsdot0 = 0;
 zudot0 = 0;
@@ -72,7 +72,7 @@ ZR = Amp*sin(w*T);
 zu = Y(:,3) + ZR;
 zs = Y(:,1) + zu;
 
-%{
+
 fig = figure(1);
 set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -153,8 +153,9 @@ Obrank = rank(OB)
 
 %% Q5
 
+%{
 solinit = bvpinit(linspace(t0,tf,steps),[0 0 0 0 0 0 0 0]);
-sol = bvp4c(@OLoptimalControl,@OLcontrolBC2,solinit);
+sol = bvp4c(@OLoptimalControl,@OLcontrolBC,solinit);
 
 length = size(sol.x,2);
 xdotMat = zeros(length,8);
@@ -182,7 +183,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Road Profile','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-SMD-FSF','-djpeg','-r300')
+% print('Active-SMD-FSF','-djpeg','-r300')
 
 fig = figure(6);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -196,7 +197,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active ')
 set(legend,'Interpreter','Latex','FontSize',12)
-print('Active-SMA-FSF','-djpeg','-r300')
+% print('Active-SMA-FSF','-djpeg','-r300')
 
 fig = figure(7);
 set(fig,'Position',[1800 -320 1200 1000])
@@ -249,3 +250,5 @@ plot(sol.x,sol.y(8,:),'-r','LineWidth',1.5)
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\lambda_4$','Interpreter','Latex','FontSize',12)
 % print('Active-TD-Dynamic-Costates','-djpeg','-r300')
+
+%}

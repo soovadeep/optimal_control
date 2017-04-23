@@ -29,7 +29,7 @@ rho4 = 0.04; % 0.04
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 5;
+tf = 9;
 steps = tf*1000;
 stepsize = (tf-t0)/steps;
 
@@ -101,7 +101,7 @@ ZR = Amp*sin(w*Tobsv);
 zuObsv = Yobsv(:,3) + ZR;
 zsObsv = Yobsv(:,1) + zuObsv;
 
-%{
+
 fig = figure(10);
 % set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -116,7 +116,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Active (Observer)','Active','Passive','Road Profile')
 set(legend,'Interpreter','Latex','FontSize',12)
-% print('Passive-SMD','-djpeg','-r300')
+print('Passive-SMD-Observer-Infinite','-djpeg','-r300')
 
 fig = figure(11);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -130,7 +130,7 @@ legend('Active (Observer)','Active','Passive')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-% print('Passive-SMA','-djpeg','-r300')
+print('Passive-SMA-Observer-Infinite','-djpeg','-r300')
 
 fig = figure(12);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -163,6 +163,7 @@ ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 
 %% Finite LQR w/ Observer
 
+%{
 clear S;
 
 tspan = [tf t0-stepsize];
@@ -277,3 +278,4 @@ title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % print('Passive-TD','-djpeg','-r300')
+%}

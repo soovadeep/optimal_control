@@ -15,7 +15,7 @@ rho4 = 0.04; % 0.04
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 1;
+tf = 3;
 steps = tf*1000;
 stepsize = (tf-t0)/steps;
 
@@ -104,6 +104,7 @@ for i = 1:steps-1
     YT(i+1,:) = YTiter(end,:);
 end
 
+%{
 % zuT = YT(:,3) + ZR;
 % zsT = YT(:,1) + zuT;
 
@@ -137,20 +138,21 @@ end
 % ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 % % print('Passive-SMA','-djpeg','-r300')
 
-% fig = figure(8);
-% % set(fig,'Position',[1800 -320 1200 1000])
-% clear title
-% clear legend
-% plot(TT,YT(:,1),'-g','LineWidth',1.5)
-% hold on
-% % plot(T,Y(:,1),'-k','LineWidth',1.5)
-% % plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
-% % legend('Active (Tracker)','Passive')
-% title('Suspension Deflection vs. Time')
-% xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
-% ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-% % print('Passive-SD','-djpeg','-r300')
-% 
+fig = figure(8);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(TT,YT(:,1),'-g','LineWidth',1.5)
+hold on
+plot(TT,0.05*TT,'-.k','LineWidth',1.5)
+% plot(T,Y(:,1),'-k','LineWidth',1.5)
+% plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
+legend('Active (Tracker)','Reference')
+title('Suspension Deflection vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+print('Passive-SD-Dyn-Tracker','-djpeg','-r300')
+
 % fig = figure(9);
 % % set(fig,'Position',[1800 -320 1200 1000])
 % clear title
@@ -166,6 +168,7 @@ end
 %}
 
 %% Non-zero Setpoint
+
 
 nu0NZ = [0; 0; 0; 0];
 nuNZ = zeros(steps+1,4);
@@ -207,12 +210,13 @@ zacclNZ = zeros(steps,1);
 K4 = zeros(steps,4);
 
 t0iter = t0;
+nuiter = nuNZ(1,:)';
 
 for i = 1:steps-1
     i
 %     SVec = S(i,:);
 %     SMat = (reshape(SVec,[4,4]))';
-    nuiter = nuNZ(i,:)';
+%     nuiter = nuNZ(i,:)';
     tfiter = t0iter + stepsize;
     tspan = [t0iter tfiter];
     x0NZiter = YNZ(i,:)';
@@ -264,28 +268,30 @@ clear title
 clear legend
 plot(TNZ,YNZ(:,1),'-g','LineWidth',1.5)
 hold on
-plot(TT,YT(:,1),'-k','LineWidth',1.5)
+plot(TT,YT(:,1),'-.k','LineWidth',1.5)
+plot(TT,0.05*ones(size(TT)),'-.r','LineWidth',1.5)
+% plot(TT,0.05*TT,'-.r','LineWidth',1.5)
 % plot(T,Y(:,1),'-k','LineWidth',1.5)
 % plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
-legend('Active (NZ)','Active (Tracker)')
+legend('Active (NZ)','Active (Tracker)','Reference')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-% print('Passive-SD','-djpeg','-r300')
+print('Passive-SD-NZ-tf3','-djpeg','-r300')
 
-fig = figure(17);
-% set(fig,'Position',[1800 -320 1200 1000])
-clear title
-clear legend
-plot(TNZ,YNZ(:,3),'-g','LineWidth',1.5)
-hold on 
-plot(TT,YT(:,3),'-k','LineWidth',1.5)
-% plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
-legend('Active (NZ)','Active (Tracker)')
-title('Tire Deflection vs. Time')
-xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
-ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-
+% fig = figure(17);
+% % set(fig,'Position',[1800 -320 1200 1000])
+% clear title
+% clear legend
+% plot(TNZ,YNZ(:,3),'-g','LineWidth',1.5)
+% hold on 
+% plot(TT,YT(:,3),'-k','LineWidth',1.5)
+% % plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
+% legend('Active (NZ)','Active (Tracker)')
+% title('Tire Deflection vs. Time')
+% xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+% ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+% 
 
 
 %}

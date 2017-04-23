@@ -156,7 +156,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Active (FSF)','Passive','Road Profile')
 % set(legend,'Interpreter','Latex','FontSize',12)
-% print('Passive-SMD','-djpeg','-r300')
+print('Passive-SMD','-djpeg','-r300')
 
 fig = figure(2);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -169,7 +169,7 @@ legend('Active (FSF)','Passive')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-% print('Passive-SMA','-djpeg','-r300')
+print('Passive-SMA-FSF','-djpeg','-r300')
 
 fig = figure(3);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -182,7 +182,7 @@ legend('Active (FSF)','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-% print('Passive-SD','-djpeg','-r300')
+print('Passive-SD-FSF','-djpeg','-r300')
 
 fig = figure(4);
 % set(fig,'Position',[1800 -320 1200 1000])
