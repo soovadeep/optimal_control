@@ -23,7 +23,7 @@ rho4 = 0.04; % 0.04
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 10;
+tf = 2;
 steps = tf*1000;
 stepsize = (tf-t0)/steps;
 
