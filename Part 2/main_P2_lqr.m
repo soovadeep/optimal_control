@@ -71,10 +71,12 @@ tspan = [t0 tf];
 
 lengthPass = size(T,1);
 zaccl = zeros(1,lengthPass);
+force = zeros(1,lengthPass);
 
 for i = 1:lengthPass
-    [xdot, zsddot] = car_lqr_infinite(T(i),Y(i,:)');
+    [xdot, zsddot, u] = car_lqr_infinite(T(i),Y(i,:)');
     zaccl(1,i) = zsddot;
+    force(1,i) = u;
 end
 
 u = 0;
@@ -166,8 +168,10 @@ x0FT = [x10FT; x20FT; x30FT; x40FT];
 YFT = zeros(steps,4);
 TFT = zeros(steps,1);
 zacclFT = zeros(steps,1);
+forceFT = zeros(steps,1);
 YFT(1,:) = x0FT';
 K2 = zeros(steps,4);
+eigenvalues = zeros(4,steps);
 
 t0iter = t0;
 
@@ -181,11 +185,13 @@ for i = 1:steps-1
     [TFTiter,YFTiter] = ode15s(@car_lqr_finite,tspan,x0FTiter); %400
     t0iter = tfiter;
     K2(i,:) = Rinv*(B'*SMat + N');
-    [YdotFT, zsddotFT] = car_lqr_finite(TFT(i),YFT(i,:)');
+    [YdotFT, zsddotFT, uFT] = car_lqr_finite(TFT(i),YFT(i,:)');
 %     YFT(i+1,:) = YFT(i,:) + YdotFT'*stepsize;
     zacclFT(i) = zsddotFT;
+    forceFT(i) = uFT;
     TFT(i+1) = tfiter;
     YFT(i+1,:) = YFTiter(end,:);
+    eigenvalues(:,i) = eig(A-B*K2(i,:));
 end
 
 zuFT = YFT(:,3) + ZR;
@@ -206,8 +212,8 @@ title('Sprung Mass Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Active (FT)','Active (IT)','Passive','Road Profile')
-set(legend,'Interpreter','Latex','FontSize',12)
-print('Passive-SMD-FLQR','-djpeg','-r300')
+% set(legend,'Interpreter','Latex','FontSize',12)
+% print('Active-SMD-FLQR','-djpeg','-r300')
 
 fig = figure(2);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -221,7 +227,7 @@ legend('Active (FT)','Active (IT)','Passive')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-print('Passive-SMA-FLQR','-djpeg','-r300')
+% print('Active-SMA-FLQR','-djpeg','-r300')
 
 fig = figure(3);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -235,7 +241,7 @@ legend('Active (FT)','Active (IT)','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-% print('Passive-SD','-djpeg','-r300')
+% print('Active-SD-FLQR','-djpeg','-r300')
 
 fig = figure(4);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -249,7 +255,7 @@ legend('Active (FT)','Active (IT)','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-% print('Passive-TD','-djpeg','-r300')
+% print('Active-TD-FLQR','-djpeg','-r300')
 
 %%
 fig = figure(5);
@@ -284,6 +290,57 @@ plot(TFT,K(:,4)*ones(steps,1),'-g','LineWidth',1.5)
 legend('Finite Time','Infinite Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$K_4$','Interpreter','Latex','FontSize',12)
-% print('Active-K-Dynamic-FLQR','-djpeg','-r300')
+% print('K-Dynamic-FLQR','-djpeg','-r300')
 
+%%
+fig = figure(6);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(TFT,forceFT,'-g','LineWidth',1.5)
+hold on 
+plot(T,force,'-k','LineWidth',1.5)
+% plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
+legend('Active (FT)','Active (IT)')
+title('Control Input vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Force\hspace{0.05in}(N)$','Interpreter','Latex','FontSize',12)
+% print('Active-Force-FLQR','-djpeg','-r300')
+
+%%
+eigenvalues = eigenvalues';
+
+fig = figure(7);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+subplot(2,2,1)
+plot(TFT(1:end-1),real(eigenvalues(1:end-1,1)),'-r','LineWidth',1.5)
+hold on
+plot(TFT,real(e(1))*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$e_1$','Interpreter','Latex','FontSize',12)
+subplot(2,2,2)
+plot(TFT(1:end-1),real(eigenvalues(1:end-1,2)),'-r','LineWidth',1.5)
+hold on
+plot(TFT,real(e(2))*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$e_2$','Interpreter','Latex','FontSize',12)
+subplot(2,2,3)
+plot(TFT(1:end-1),real(eigenvalues(1:end-1,3)),'-r','LineWidth',1.5)
+hold on
+plot(TFT,real(e(3))*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$e_3$','Interpreter','Latex','FontSize',12)
+subplot(2,2,4)
+plot(TFT(1:end-1),real(eigenvalues(1:end-1,4)),'-r','LineWidth',1.5)
+hold on
+plot(TFT,real(e(4))*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$e_4$','Interpreter','Latex','FontSize',12)
+% print('eig-FLQR','-djpeg','-r300')
 %}

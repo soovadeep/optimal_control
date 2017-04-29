@@ -1,4 +1,4 @@
-function [y,zsddot] = car_lqr_infinite(t,x)
+function [y,zsddot,F] = car_lqr_infinite(t,x)
 
 global ks bs ms w Amp A B L K
 

@@ -36,7 +36,7 @@ clear S;
 
 tspan = [tf t0-stepsize];
 S0 = zeros(16,1);
-[TRiccati,S] = rk4fixed(@finiteLQRRiccati,tspan,S0,steps+1);
+[TRiccati,S] = rk4fixed(@finiteLQTRiccati,tspan,S0,steps+1);
 
 S = flipud(S);
 
@@ -67,7 +67,7 @@ for i = steps + 1:-1:2
 end
 
 %%
-zs0T = 0;
+zs0T = -0.05;
 zu0T = 0;
 zsdot0T = 0;
 zudot0T = 0;
@@ -83,6 +83,7 @@ YT = zeros(steps,4);
 YT(1,:) = x0T';
 TT = zeros(steps,1);
 zacclT = zeros(steps,1);
+rorceT = zeros(steps,1);
 K3 = zeros(steps,4);
 
 t0iter = t0;
@@ -98,13 +99,15 @@ for i = 1:steps-1
     [TTiter,YTiter] = ode15s(@car_lqt_finite,tspan,x0Titer);
     t0iter = tfiter;
     K3(i,:) = Rinv*(B'*SMat + N');
-    [xdotT, zsddotT] = car_lqt_finite(TT(i),YT(i,:)');
+    [xdotT, zsddotT, F] = car_lqt_finite(TT(i),YT(i,:)');
     zacclT(i) = zsddotT;
+    forceT(i) = F;
     TT(i+1) = tfiter;
     YT(i+1,:) = YTiter(end,:);
 end
 
 %{
+
 % zuT = YT(:,3) + ZR;
 % zsT = YT(:,1) + zuT;
 
@@ -138,6 +141,7 @@ end
 % ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
 % % print('Passive-SMA','-djpeg','-r300')
 
+%%
 fig = figure(8);
 % set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -151,7 +155,22 @@ legend('Active (Tracker)','Reference')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-SD-Dyn-Tracker','-djpeg','-r300')
+print('SD-Tracker-Dyn','-djpeg','-r300')
+
+%%
+fig = figure(9);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(TT(1:end-1),forceT,'-g','LineWidth',1.5)
+hold on
+% plot(T,Y(:,1),'-k','LineWidth',1.5)
+% plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
+% legend('Active (Tracker)','Reference')
+title('Control Input vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Force\hspace{0.05in}(N)$','Interpreter','Latex','FontSize',12)
+print('Force-Tracker-Dyn','-djpeg','-r300')
 
 % fig = figure(9);
 % % set(fig,'Position',[1800 -320 1200 1000])
@@ -191,7 +210,7 @@ for i = steps + 1:-1:2
     nuNZ(i-1,:) = nuNZiter(end,:);
 end
 
-zs0NZ = 0;
+zs0NZ = -0.05;
 zu0NZ = 0;
 zsdot0NZ = 0;
 zudot0NZ = 0;
@@ -207,6 +226,7 @@ YNZ = zeros(steps,4);
 YNZ(1,:) = x0NZ';
 TNZ = zeros(steps,1);
 zacclNZ = zeros(steps,1);
+forceNZ = zeros(steps,1);
 K4 = zeros(steps,4);
 
 t0iter = t0;
@@ -223,8 +243,9 @@ for i = 1:steps-1
     [~,YNZiter] = ode15s(@car_lqt_finite,tspan,x0NZiter);
     t0iter = tfiter;
     K4(i,:) = Rinv*(B'*SMat + N');
-    [~, zsddotNZ] = car_lqt_finite(TNZ(i),YNZ(i,:)');
+    [~, zsddotNZ, FNZ] = car_lqt_finite(TNZ(i),YNZ(i,:)');
     zacclNZ(i) = zsddotNZ;
+    forceNZ(i) = FNZ;
     TNZ(i+1) = tfiter;
     YNZ(i+1,:) = YNZiter(end,:);
 end
@@ -277,7 +298,23 @@ legend('Active (NZ)','Active (Tracker)','Reference')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-SD-NZ-tf3','-djpeg','-r300')
+% print('Passive-SD-NZ-tf3','-djpeg','-r300')
+
+%%
+fig = figure(9);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(TT,forceNZ,'-k','LineWidth',1.5)
+hold on
+plot(TT(1:end-1),forceT,'-g','LineWidth',1.5)
+% plot(T,Y(:,1),'-k','LineWidth',1.5)
+% plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
+legend('Active (NZ)','Active (Tracker)')
+title('Control Input vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$Force\hspace{0.05in}(N)$','Interpreter','Latex','FontSize',12)
+print('Force-NZ-tf3','-djpeg','-r300')
 
 % fig = figure(17);
 % % set(fig,'Position',[1800 -320 1200 1000])
@@ -292,6 +329,38 @@ print('Passive-SD-NZ-tf3','-djpeg','-r300')
 % xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 % ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % 
-
-
+%%
+fig = figure(18);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+subplot(2,2,1)
+plot(TT,nuT(1:end-1,1),'-r','LineWidth',1.5)
+hold on
+plot(TT,nuiter(1)*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\nu_1$','Interpreter','Latex','FontSize',12)
+subplot(2,2,2)
+plot(TT,nuT(1:end-1,2),'-r','LineWidth',1.5)
+hold on
+plot(TT,nuiter(2)*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\nu_2$','Interpreter','Latex','FontSize',12)
+subplot(2,2,3)
+plot(TT,nuT(1:end-1,3),'-r','LineWidth',1.5)
+hold on
+plot(TT,nuiter(3)*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')girgir 
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\nu_3$','Interpreter','Latex','FontSize',12)
+subplot(2,2,4)
+plot(TT,nuT(1:end-1,4),'-r','LineWidth',1.5)
+hold on
+plot(TT,nuiter(4)*ones(steps,1),'-g','LineWidth',1.5)
+legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$\nu_4$','Interpreter','Latex','FontSize',12)
+print('nu-Tracker-tf3','-djpeg','-r300')
 %}

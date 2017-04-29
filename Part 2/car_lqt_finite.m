@@ -1,4 +1,4 @@
-function [y,zsddot] = car_lqt_finite(t,x)
+function [y,zsddot,F] = car_lqt_finite(t,x)
 
 global ks bs ms w Amp A B L SMat Rinv N nuiter Abar
 
