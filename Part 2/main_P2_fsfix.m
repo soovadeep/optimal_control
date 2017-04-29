@@ -23,7 +23,7 @@ rho4 = 0.04; % 0.04
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
-tf = 2;
+tf = 10;
 steps = tf*1000;
 stepsize = (tf-t0)/steps;
 
@@ -156,7 +156,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Active (FSF)','Passive','Road Profile')
 % set(legend,'Interpreter','Latex','FontSize',12)
-print('Passive-SMD','-djpeg','-r300')
+print('Passive-SMD-FSF','-djpeg','-r300')
 
 fig = figure(2);
 % set(fig,'Position',[1800 -320 1200 1000])

@@ -11,7 +11,7 @@ x2 = x(2);
 x3 = x(3);
 x4 = x(4);
 
-rFinal = zeros(1,1);
+rFinal = 0.05;
 K = Rinv*(B'*SMat + N');
 
 u = -(K - Rinv*B'*VVec*inv(PVec)*VVec')*x - Rinv*B'*VVec*inv(PVec)*rFinal;
