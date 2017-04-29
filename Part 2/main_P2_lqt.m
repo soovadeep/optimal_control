@@ -352,7 +352,7 @@ subplot(2,2,3)
 plot(TT,nuT(1:end-1,3),'-r','LineWidth',1.5)
 hold on
 plot(TT,nuiter(3)*ones(steps,1),'-g','LineWidth',1.5)
-legend('Finite Time','Infinite Time')girgir 
+legend('Finite Time','Infinite Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\nu_3$','Interpreter','Latex','FontSize',12)
 subplot(2,2,4)

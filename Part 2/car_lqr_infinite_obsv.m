@@ -12,7 +12,7 @@ ytilde = x(7:8);
 z = C1*x(1:2);
 yhat = M*z + W;
 
-F = -K*[x1;x2;yhat(1);yhat(2)];
+F = -K*[x1;x2;yhat(1);yhat(2)]; % Control law
 
 zrdot = Amp*w*cos(w*t);
 

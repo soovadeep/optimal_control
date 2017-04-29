@@ -13,7 +13,7 @@ z = C1*x(1:2);
 yhat = M*z + W;
 
 K2 = Rinv*(B'*SMat + N');
-F = -K2*[x1;x2;yhat(1);yhat(2)];
+F = -K2*[x1;x2;yhat(1);yhat(2)]; % Control law
 
 zrdot = Amp*w*cos(w*t);
 

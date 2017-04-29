@@ -19,7 +19,7 @@ yhat = M*z + W;
 rFinal = zeros(1,1);
 K = Rinv*(B'*SMat + N');
 
-F = -(K - Rinv*B'*VVec*inv(PVec)*VVec')*[x1;x2;yhat(1);yhat(2)] - Rinv*B'*VVec*inv(PVec)*rFinal;
+F = -(K - Rinv*B'*VVec*inv(PVec)*VVec')*[x1;x2;yhat(1);yhat(2)] - Rinv*B'*VVec*inv(PVec)*rFinal; % Control law
 
 
 % xdot = A*x + B*u;
