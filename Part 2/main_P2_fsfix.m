@@ -156,7 +156,7 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Active (FSF)','Passive','Road Profile')
 % set(legend,'Interpreter','Latex','FontSize',12)
-print('Passive-SMD-FSF','-djpeg','-r300')
+% print('Passive-SMD-FSF','-djpeg','-r300')
 
 fig = figure(2);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -169,7 +169,7 @@ legend('Active (FSF)','Passive')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-print('Passive-SMA-FSF','-djpeg','-r300')
+% print('Passive-SMA-FSF','-djpeg','-r300')
 
 fig = figure(3);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -182,7 +182,7 @@ legend('Active (FSF)','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-SD-FSF','-djpeg','-r300')
+% print('Passive-SD-FSF','-djpeg','-r300')
 
 fig = figure(4);
 % set(fig,'Position',[1800 -320 1200 1000])
@@ -195,3 +195,51 @@ legend('Active (FSF)','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
+
+%%
+fig = figure(5);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+subplot(2,2,1)
+plot(T,V(1:end-1,1),'-r','LineWidth',1.5)
+hold on
+% plot(TT,nuiter(1)*ones(steps,1),'-g','LineWidth',1.5)
+% legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$V_1$','Interpreter','Latex','FontSize',12)
+subplot(2,2,2)
+plot(T,V(1:end-1,2),'-r','LineWidth',1.5)
+hold on
+% plot(TT,nuiter(2)*ones(steps,1),'-g','LineWidth',1.5)
+% legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$V_2$','Interpreter','Latex','FontSize',12)
+subplot(2,2,3)
+plot(T,V(1:end-1,3),'-r','LineWidth',1.5)
+hold on
+% plot(TT,nuiter(3)*ones(steps,1),'-g','LineWidth',1.5)
+% legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$V_3$','Interpreter','Latex','FontSize',12)
+subplot(2,2,4)
+plot(T,V(1:end-1,4),'-r','LineWidth',1.5)
+hold on
+% plot(TT,nuiter(4)*ones(steps,1),'-g','LineWidth',1.5)
+% legend('Finite Time','Infinite Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$V_4$','Interpreter','Latex','FontSize',12)
+print('V-FSF','-djpeg','-r300')
+%}
+
+fig = figure(6);
+% set(fig,'Position',[1800 -320 1200 1000])
+clear title
+clear legend
+plot(T,P(1:end-1),'-g','LineWidth',1.5)
+hold on 
+% plot(TPass(1:steps),YPass(1:steps,3),'-.r','LineWidth',1.5)
+% legend('Active (FSF)','Passive')
+title('P vs. Time')
+xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
+ylabel('$P$','Interpreter','Latex','FontSize',12)
