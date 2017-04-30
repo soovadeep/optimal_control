@@ -6,7 +6,7 @@ clc
 
 global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf K SMat t0 nuiter Qbar Abar
 
-load('Y_passive_static.mat')
+load('Y_passive_dynamic.mat')
 TPass = T;
 YPass = Y;
 zuPass = zu;
@@ -16,16 +16,16 @@ clear T Y zu zs;
 
 kt = (704*10^3)/4; % N/m
 ks = 15*10^3; % N/m
-bs = 1400; % Ns/m  Check
+bs = 1400; % Ns/m  
 bt = 0; % Ns/m
 mu = 181/4; % kg
 ms = 1814/4; % kg
-rho1 = 0.4; % 0.4 
-rho2 = 0.04; % 0.04
-rho3 = 0.4; % 0.4
-rho4 = 0.04; % 0.04
+rho1 = 0.4;  
+rho2 = 0.04;
+rho3 = 0.4; 
+rho4 = 0.04; 
 Amp = 0.05;
-w = 0*2*pi;
+w = 1*2*pi;
 t0 = 0;
 tf = 9;
 steps = tf*1000;
@@ -53,7 +53,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 
 [K,~,e] = lqr(A,B,Q,R,N);
 
-zs0 = -0.05;
+zs0 = 0;
 zu0 = 0;
 zsdot0 = 0;
 zudot0 = 0;
@@ -153,7 +153,7 @@ S0 = zeros(16,1);
 
 S = flipud(S);
 
-zs0FT = -0.05;
+zs0FT = 0;
 zu0FT = 0;
 zsdot0FT = 0;
 zudot0FT = 0;
@@ -182,11 +182,10 @@ for i = 1:steps-1
     tfiter = t0iter + stepsize;
     tspan = [t0iter tfiter];
     x0FTiter = YFT(i,:)';
-    [TFTiter,YFTiter] = ode15s(@car_lqr_finite,tspan,x0FTiter); %400
+    [TFTiter,YFTiter] = ode15s(@car_lqr_finite,tspan,x0FTiter); 
     t0iter = tfiter;
     K2(i,:) = Rinv*(B'*SMat + N');
     [YdotFT, zsddotFT, uFT] = car_lqr_finite(TFT(i),YFT(i,:)');
-%     YFT(i+1,:) = YFT(i,:) + YdotFT'*stepsize;
     zacclFT(i) = zsddotFT;
     forceFT(i) = uFT;
     TFT(i+1) = tfiter;
@@ -198,7 +197,7 @@ zuFT = YFT(:,3) + ZR;
 zsFT = YFT(:,1) + zuFT;
 
 steps = tf*1000;
-%%
+
 fig = figure(1);
 % set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -257,7 +256,6 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 % print('Active-TD-FLQR','-djpeg','-r300')
 
-%%
 fig = figure(5);
 % set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -292,7 +290,6 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$K_4$','Interpreter','Latex','FontSize',12)
 % print('K-Dynamic-FLQR','-djpeg','-r300')
 
-%%
 fig = figure(6);
 % set(fig,'Position',[1800 -320 1200 1000])
 clear title
@@ -307,7 +304,6 @@ xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Force\hspace{0.05in}(N)$','Interpreter','Latex','FontSize',12)
 % print('Active-Force-FLQR','-djpeg','-r300')
 
-%%
 eigenvalues = eigenvalues';
 
 fig = figure(7);

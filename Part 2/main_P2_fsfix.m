@@ -111,6 +111,7 @@ x0 = [x10; x20; x30; x40];
 Y = zeros(steps,4);
 T = zeros(steps,1);
 zaccl = zeros(steps,1);
+force = zeros(steps,1);
 Y(1,:) = x0';
 K2 = zeros(steps,4);
 
@@ -130,7 +131,7 @@ for i = 1:steps-1
     K2(i,:) = Rinv*(B'*SMat + N');
     [Ydot, zsddot, u] = finalStateFixed(T(i),Y(i,:)');
     zaccl(i) = zsddot;
-    cont(i) = u;
+    force(i) = u;
     T(i+1) = tfiter;
     Y(i+1,:) = Yiter(end,:);
 end
@@ -229,7 +230,7 @@ hold on
 % legend('Finite Time','Infinite Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$V_4$','Interpreter','Latex','FontSize',12)
-print('V-FSF','-djpeg','-r300')
+% print('V-FSF','-djpeg','-r300')
 %}
 
 fig = figure(6);
@@ -242,4 +243,4 @@ hold on
 % legend('Active (FSF)','Passive')
 title('P vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
-ylabel('$P$','Interpreter','Latex','FontSize',12)
+% ylabel('$P$','Interpreter','Latex','FontSize',12)

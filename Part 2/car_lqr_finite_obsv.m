@@ -1,4 +1,4 @@
-function [xdot,zsddot] = car_lqr_finite_obsv(t,x)
+function [xdot,zsddot,F] = car_lqr_finite_obsv(t,x)
 
 global ks bs ms w Amp A B L SMat Rinv N FW G H C1 M
 
