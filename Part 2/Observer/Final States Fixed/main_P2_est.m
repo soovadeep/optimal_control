@@ -4,7 +4,7 @@ clear
 
 %% Parameters and Passive Data
 
-global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf K SMat t0 nuiter Qbar Abar FW H G M C1 VVec PVec
+global ks kt ms mu bs bt w Amp A B C L rho1 rho2 rho3 rho4 R N Q Rinv x10 x20 x30 x40 tf K SMat t0 FW H G M C1 VVec PVec
 
 load('Y_passive_static.mat')
 TPass = T;
@@ -30,10 +30,10 @@ bs = 1400; % Ns/m  Check
 bt = 0; % Ns/m
 mu = 181/4; % kg
 ms = 1814/4; % kg
-rho1 = 0.4; % 0.4 
-rho2 = 0.04; % 0.04
-rho3 = 0.4; % 0.4
-rho4 = 0.04; % 0.04
+rho1 = 0.4; 
+rho2 = 0.04;
+rho3 = 0.4; 
+rho4 = 0.04; 
 Amp = 0.05;
 w = 0*2*pi;
 t0 = 0;
@@ -68,7 +68,6 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 %% Infinite LQR w/ Observer
 
 p = [real(20*e(1));real(25*e(1))];
-% p = [-200-30*i;-200+30*i];
 M = place(A22',(C1*A12)',p);
 
 FW = A22 - M*C1*A12;
@@ -329,8 +328,6 @@ print('Passive-Force-FLQR-Observer','-djpeg','-r300')
 
 %% LQR w/ FSF w/ Observer
 
-
-
 tspan = [tf t0-stepsize];
 S0 = zeros(16,1);
 [~, S] = rk4fixed(@finalStateFixed_S, tspan, S0, steps+1);
@@ -338,7 +335,6 @@ S0 = zeros(16,1);
 S = flipud(S);
 
 %%
-% V0T = [0; 0; 0; 0];
 V0 = [1 0 0 0]';
 V = zeros(steps+1,4);
 V(end,:) = V0';
@@ -346,7 +342,6 @@ V(end,:) = V0';
 tfiter = tf;
 
 for i = steps + 1:-1:2
-    i
     SVec = S(i,:);
     SMat = (reshape(SVec,[4,4]))';
     t0iter = tfiter - stepsize;
@@ -357,19 +352,13 @@ for i = steps + 1:-1:2
     V(i-1,:) = Viter(end,:);
 end
 
-%%
-
 P0 = [0];
-% P0 = C';
 P = zeros(steps+1,1);
 P(end,:) = P0';
 
 tfiter = tf;
 
 for i = steps + 1:-1:2
-    i
-%     SVec = S(i,:);
-%     SMat = (reshape(SVec,[4,4]))';
     VVec = V(i,:)';
     t0iter = tfiter - stepsize;
     tspan = [tfiter t0iter];
@@ -379,7 +368,6 @@ for i = steps + 1:-1:2
     P(i-1) = Piter(end);
 end
 
-%%
 zs0 = -0.05;
 zu0 = 0;
 zsdot0 = 0;
@@ -407,7 +395,6 @@ K2 = zeros(steps,4);
 t0iter = t0;
 
 for i = 1:steps-1
-    i
     SVec = S(i,:);
     SMat = (reshape(SVec,[4,4]))';
     VVec = V(i,:)';
@@ -431,9 +418,8 @@ zu = Y(:,3) + ZR;
 zs = Y(:,1) + zu;
 
 steps = tf*1000;
-%%
+
 fig = figure(1);
-% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(T,Y(:,1),'-g','LineWidth',1.5)
@@ -445,11 +431,8 @@ title('Sprung Mass Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Active (FSF, Observer)','Passive','Active (FSF)','Road Profile')
-% set(legend,'Interpreter','Latex','FontSize',12)
-print('Passive-SMD-FSF-Obsv','-djpeg','-r300')
 
 fig = figure(2);
-% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(T,zaccl,'-g','LineWidth',1.5)
@@ -460,52 +443,38 @@ legend('Active (FSF, Observer)','Passive','Active (FSF)')
 title('Sprung Mass Acceleration vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$\ddot{Z}_s\hspace{0.05in}(m/s^2)$','Interpreter','Latex','FontSize',12)
-print('Passive-SMA-FSF-Obsv','-djpeg','-r300')
 
 fig = figure(20);
-% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
-% plot(Tobsv,Yobsv(:,1),'-g','LineWidth',1.5)
 hold on
 plot(T,Y(:,1),'-m','LineWidth',1.5)
 plot(TFSF(1:steps),YFSF(1:steps,1),'-k','LineWidth',1.5)
 plot(TPass(1:steps),YPass(1:steps,1),'-r','LineWidth',1.5)
-% legend('Active (Observer)','Active (Observer, Finite)','Active','Passive')
 legend('Active (FSF, Observer)','Active (FSF)','Passive')
 title('Suspension Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_s - Z_u\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-SD-FSF-Obsv','-djpeg','-r300')
 
 fig = figure(21);
-% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
-% plot(Tobsv,Yobsv(:,3),'-g','LineWidth',1.5)
 hold on
 plot(T,Y(:,3),'-m','LineWidth',1.5)
 plot(TFSF(1:steps),YFSF(1:steps,3),'-k','LineWidth',1.5)
 plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
-% legend('Active (Observer)','Active (Observer, Finite)','Active','Passive')
 legend('Active (FSF, Observer)','Active (FSF)','Passive')
 title('Tire Deflection vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
-print('Passive-TD-FSF-Obsv','-djpeg','-r300')
 
 fig = figure(22);
-% set(fig,'Position',[1800 -320 1200 1000])
 clear title
 clear legend
 plot(T,force,'-g','LineWidth',1.5)
 hold on 
 plot(TFSF,forceFSF,'-k','LineWidth',1.5)
-% plot(TPass(1:steps),YPass(1:steps,3),'-r','LineWidth',1.5)
 legend('Active (FSF, Observer)','Active (FSF)')
 title('Control Input vs. Time')
 xlabel('$Time\hspace{0.05in}(s)$','Interpreter','Latex','FontSize',12)
 ylabel('$Force\hspace{0.05in}(N)$','Interpreter','Latex','FontSize',12)
-print('Passive-Force-FSF-Obsv','-djpeg','-r300')
-
-%}

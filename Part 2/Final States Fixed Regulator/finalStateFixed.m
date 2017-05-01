@@ -1,10 +1,6 @@
 function [xdot,zsddot, u] = finalStateFixed(t,x)
 
-global A B Rinv SMat VVec PVec ks bs ms w Amp N
-
-% SMat = reshape(S, [4,4]);
-% VVec = reshape(V, [4,4]);
-% PVec = reshape(P, [4,4]);
+global A B Rinv SMat VVec PVec ks bs ms N
 
 x1 = x(1);
 x2 = x(2);

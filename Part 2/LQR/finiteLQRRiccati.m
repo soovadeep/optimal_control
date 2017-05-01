@@ -5,6 +5,5 @@ global A B Rinv N Q
 SMat = reshape(S,[4,4])';
 
 SdotMat = -((A - B*Rinv*N')'*SMat + SMat*(A - B*Rinv*N') + (Q - N*Rinv*N') - SMat*B*Rinv*B'*SMat);
-% SdotMat = -(A'*SMat + SMat*A - (SMat*B + N)*Rinv*(B'*SMat + N') + Q);
 Sdot =  reshape(SdotMat',[16,1]);
 end
