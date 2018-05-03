@@ -17,7 +17,7 @@ rho2 = 0.04;
 rho3 = 0.4;
 rho4 = 0.04;
 Amp = 0.05;
-w = 1*2*pi;
+w = 0*2*pi;
 t0 = 0;
 tf = 30;
 steps = tf*1000;
@@ -42,7 +42,7 @@ Q = [(ks^2/ms^2 + rho1)  bs*ks/ms^2            0      -bs*ks/ms^2;
 % x3 = zu-zr
 % x4 = zudot
 
-zs0 = 0;
+zs0 = -0.05;
 zu0 = 0;
 zsdot0 = 0;
 zudot0 = 0;
@@ -120,7 +120,6 @@ ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 
 %% Q3
 
-%{
 disp('Eigen Values of A');
 [EigVec,EigVal] = eig(A);
 EigVal
@@ -153,7 +152,6 @@ Obrank = rank(OB)
 
 %% Q5
 
-%{
 solinit = bvpinit(linspace(t0,tf,steps),[0 0 0 0 0 0 0 0]);
 sol = bvp4c(@OLoptimalControl,@OLcontrolBC,solinit);
 
@@ -226,8 +224,6 @@ ylabel('$Z_u - Z_r\hspace{0.05in}(m)$','Interpreter','Latex','FontSize',12)
 legend('Passive','Active')
 set(legend,'Interpreter','Latex','FontSize',12)
 % print('Active-TD','-djpeg','-r300')
-
-%%
 
 fig = figure(9);
 set(fig,'Position',[1800 -320 1200 1000])
